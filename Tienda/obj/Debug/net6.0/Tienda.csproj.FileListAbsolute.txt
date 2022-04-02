@@ -1,0 +1,15 @@
+C:\Users\gokos\Desktop\Tienda\Tienda\bin\Debug\net6.0\Tienda.exe
+C:\Users\gokos\Desktop\Tienda\Tienda\bin\Debug\net6.0\Tienda.deps.json
+C:\Users\gokos\Desktop\Tienda\Tienda\bin\Debug\net6.0\Tienda.runtimeconfig.json
+C:\Users\gokos\Desktop\Tienda\Tienda\bin\Debug\net6.0\Tienda.dll
+C:\Users\gokos\Desktop\Tienda\Tienda\bin\Debug\net6.0\Tienda.pdb
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.csproj.AssemblyReference.cache
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.AssemblyInfoInputs.cache
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.AssemblyInfo.cs
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.csproj.CoreCompileInputs.cache
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.dll
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\refint\Tienda.dll
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.pdb
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\Tienda.genruntimeconfig.cache
+C:\Users\gokos\Desktop\Tienda\Tienda\obj\Debug\net6.0\ref\Tienda.dll
