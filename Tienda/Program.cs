@@ -5,167 +5,136 @@ namespace Tienda
 {
     class Program
     {
-
+        public static string a = "------------------------------------------------------------------------------------------------------------------------------------------";
         static void Main(string[] args)
-        {
-            ArrayList personal = new ArrayList();
-            string line;
+        {   
             try
             {
-                //Pass the file path and file name to the StreamReader constructor
-                System.IO.StreamReader sr = new System.IO.StreamReader("../../../data.csv");
-                //Read the first line of text
-                string separador = ",";
-                line = sr.ReadLine();
-                Console.WriteLine("-----------------------------------");
-                Console.WriteLine(" Departamento de administracion (Subway)");
-                Console.WriteLine("-----------------------------------");
-                //Continue to read until you reach end of file
-                while ((line = sr.ReadLine()) != null)
-                {
-                    string[] fila = line.Split(separador);
-                    
-                    double tipoEmpleado = Convert.ToDouble(fila[0]);
-                    string nombre = fila[1];
-                    string cedula = fila[2];
-                    double horas = Convert.ToDouble(fila[3]);
-
-                    if (tipoEmpleado == 0)
-                    {
-                        // gerente
-                        personal.Add(new Gerente(nombre, cedula, horas, 10));
-
-                    } else
-                    {
-                        // empleado
-                        personal.Add(new Empleado(nombre, cedula, horas));
-                    }
-                }                
-                foreach (Persona persona in personal)
-                {
-                    persona.mostrarDatos();
-                    Console.WriteLine("-----------------------------------");
-                }
-                //close the file
-                sr.Close();
-                Console.WriteLine(" Total pago a gerentes: {0} bs", calcularPagoGerentes(personal));                
-                Console.WriteLine(" Total pago a empleados: {0} bs", calcularPagoEmpleados(personal));                
-                Console.WriteLine(" Total nomina: {0} bs", calcularPagoEmpleados(personal) + calcularPagoGerentes(personal));
-                Console.WriteLine("-----------------------------------");
+                ArrayList gerentes = leoArchivo();
+                mostrarDatos(gerentes);
+                promediosMensuales(gerentes);
+                Console.WriteLine(a);
+                
                 Console.Write(" Presione Enter para continuar");
                 Console.ReadLine();
             }
             catch (Exception e)
             {
-                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(a);
                 Console.WriteLine(" Exception: " + e);
             }
             finally
             {
-                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(a);
                 Console.WriteLine(" Fin del programa...");
             }
             
         }
 
-        public static double calcularPagoGerentes(ArrayList personal)
+        public static ArrayList leoArchivo()
         {
-            double total = 0;
-            foreach (Persona persona in personal)
-            {
-                Type a = persona.GetType();
-                if (a == typeof(Gerente))
+            ArrayList gerentes = new ArrayList();
+            string linea;
+            
+            System.IO.StreamReader sr = new System.IO.StreamReader("../../../data.csv");
+            
+            string separador = ",";
+            linea = sr.ReadLine();
+
+            Console.WriteLine(a);
+            Console.WriteLine(" {0,80}", "Departamento de ventas (KFC)");
+            Console.WriteLine(a);
+            Console.WriteLine(" {0,-15} {1,-20} {2,-12} {3,-12} {4,-12} {5,-12} {6,-12} {7,-12}  {8,-12}", "Gerente", "Sucursal", "Nov", "Dic", "Ene", "Feb", "Mar", "Abr", "Promedio de Sucursal");
+            Console.WriteLine(a);
+
+            
+            while ((linea = sr.ReadLine()) != null)
+            {                
+                string[] fila = linea.Split(separador);
+                double[] ventas = new double[fila.Length-2];
+                string sucursal = fila[0];
+                string nombre = fila[1];
+                
+                for (int i=2; i<(fila.Length); i++)
                 {
-                    Gerente gerente = (Gerente)persona;
-                    total += gerente.calcularSueldo();
+                    ventas[i-2] = Convert.ToDouble(fila[i]);                    
                 }
+
+                gerentes.Add(new Gerente(nombre, sucursal, ventas));
+                
             }
             
-            return total;
+            sr.Close();
+            return gerentes;
         }
 
-        public static double calcularPagoEmpleados(ArrayList personal)
+        public static void mostrarDatos(ArrayList gerentes)
         {
-            double total = 0;
-            foreach (Persona persona in personal)
+            foreach (Gerente gerente in gerentes)
             {
-                Type a = persona.GetType(); 
-                if (a == typeof(Empleado))
-                {
-                    Empleado gerente = (Empleado)persona;
-                    total += gerente.calcularSueldo();
-                }
+                gerente.mostrarDatos();
             }
-
-            return total;
         }
 
+        public static void promediosMensuales(ArrayList gerentes)
+        {
+            double promedio = 0;
+            Console.WriteLine(a);
+            Gerente aux = (Gerente)gerentes[0];
+            Console.Write(" {0,32}    ", "Promedio mensual");
+            for (int i=0; i<aux.ventas.Length; i++)
+            {
+                foreach (Gerente gerente in gerentes)
+                {
+                    promedio += gerente.ventas[i];
+                }
+                Console.Write(" {0,-12:N2}", promedio / gerentes.Count);
+            }
+            Console.WriteLine("");
+        }
     }
         
     class Persona
     {
-        protected string nombre;
-        protected string cedula;
+        protected string nombre;        
         
-        public Persona(string nombre, string cedula)
+        public Persona(string nombre)
         {
             this.nombre = nombre;
-            this.cedula = cedula;
+            
         }
 
         public virtual void mostrarDatos()
         {
-            Console.WriteLine(" Nombre: {0}, Cedula: {1}", this.nombre, this.cedula);
-        }
-    }
-
-    class Empleado : Persona
-    {
-        protected double horas;
-        private int sueldoHora = 5;
-        public Empleado(string nombre, string cedula, double horas)
-            : base(nombre, cedula)
-        {
-            this.horas = horas;
-        }
-
-        public override void mostrarDatos()
-        {
-            Console.WriteLine(" - Empleado");
-            base.mostrarDatos();
-            Console.WriteLine(" Sueldo: {0} bs", this.calcularSueldo());
-        }
-
-        public double calcularSueldo()
-        {   
-            return this.horas * this.sueldoHora;
+            Console.Write(" {0,-15}", this.nombre);
         }
     }
 
     class Gerente : Persona
-    {
-        private double regalias, horas;
-        private int sueldoHora = 20;
-        public Gerente(string nombre, string cedula, double horas, double regalias)
-            : base(nombre, cedula)
-        {
-            this.regalias = regalias;
-            this.horas = horas;
+    {        
+        private string sucursal;
+        public double[] ventas;
+
+        public Gerente(string nombre, string sucursal, double[] ventas)
+            : base(nombre)
+        {            
+            this.sucursal = sucursal;
+            this.ventas = ventas;
         }
-        public string getNombre()
-        {
-            return this.nombre;
-        }
+
         public override void mostrarDatos()
-        {
-            Console.WriteLine(" - Gerente");
+        {   
             base.mostrarDatos();
-            Console.WriteLine(" Sueldo: {0} bs", this.calcularSueldo());
-        }
-        public double calcularSueldo()
-        {
-            return (this.horas * this.sueldoHora) + this.regalias;
-        }
+            Console.Write(" {0,-20} ", this.sucursal);
+            double promedio = 0;
+            foreach (double venta in ventas)
+            {
+                Console.Write("{0,-12:N2} ", venta);
+                promedio += venta;
+            }
+            promedio = promedio / ventas.Length;
+            Console.WriteLine(" {0:N2} bs", promedio);            
+        }        
     }
 
 }

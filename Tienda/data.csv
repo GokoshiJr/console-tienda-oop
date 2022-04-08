@@ -1,8 +1,6 @@
-TipoEmpleado,Nombre,Cedula,HorasTrabajando
-0,Alejandro,28741852,100
-1,Andres,27789963,120
-1,Roberto,26357486,130
-0,Alex,30142536,110
-1,Carlos,32986532,100
-1,Jose,22445588,122
-1,Luis,21486248,140
+Sucursal,Vendedor,VentasNoviembre,VentasDiciembre,VentasEnero,VentasFebrero,VentasMarzo,VentasAbril
+Valencia,Enrique,12345,9456,6789,10234,8903,11789
+Caracas,Daniel,2345,5600,12300,1234,10250,7890
+Maracay,Alejandra,1200,4560,2300,15670,11845,3450
+Barquisimeto,Mariana,1250,6782,5000,6700,16789,8900
+SanCristobal,Genesis,4500,5400,8900,9800,10000,6300
