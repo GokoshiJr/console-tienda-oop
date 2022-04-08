@@ -8,203 +8,169 @@ namespace Tienda
 
         static void Main(string[] args)
         {
-
-            bool salir = false;
-            bool userLog = false;
-            string input = "";
-            string clave = "1234";
-
-            userLog = Login(clave);
-
-            if (userLog) // usuario logeado exitosamente
+            ArrayList personal = new ArrayList();
+            string line;
+            try
             {
-                while (!salir)
+                //Pass the file path and file name to the StreamReader constructor
+                System.IO.StreamReader sr = new System.IO.StreamReader("../../../data.csv");
+                //Read the first line of text
+                string separador = ",";
+                line = sr.ReadLine();
+                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(" Departamento de administracion (Subway)");
+                Console.WriteLine("-----------------------------------");
+                //Continue to read until you reach end of file
+                while ((line = sr.ReadLine()) != null)
                 {
-                    User user = RegisterUser();
-                    ArrayList products = RegisterProducts();
-                    Factura(products, user);
-                    Console.Write(" ¿Registrar otro cliente? Si(1)/No(0): ");
-                    input = Console.ReadLine();
-                    if (input == "0")
+                    string[] fila = line.Split(separador);
+                    
+                    double tipoEmpleado = Convert.ToDouble(fila[0]);
+                    string nombre = fila[1];
+                    string cedula = fila[2];
+                    double horas = Convert.ToDouble(fila[3]);
+
+                    if (tipoEmpleado == 0)
                     {
-                        salir = true;
-                    }
-                }
-                Console.WriteLine("");
-            }
+                        // gerente
+                        personal.Add(new Gerente(nombre, cedula, horas, 10));
 
-        }
-
-        static double[] IVA(ArrayList _products, int _IVA)
-        {
-            double[] result = { 0, 0 };
-            double acum = 0;
-            foreach (Producto product in _products)
-            {
-                acum += product.getTotal();
-            }
-            result[0] = (acum * _IVA) / 100;
-            result[1] = acum + (acum * _IVA) / 100;
-            return result;
-        }
-
-        static void Factura(ArrayList _products, User _user)
-        {
-
-            Console.WriteLine(_user);
-            Console.WriteLine("");
-            Console.WriteLine(" {0,-15} {1,-15} {2,-15} {3,-15}", "Producto", "Precio bs", "Cantidad", "Total bs");
-            Console.WriteLine("");
-            foreach (Producto product in _products)
-            {
-                Console.WriteLine(product);
-            }
-            Console.WriteLine("");
-            double[] results = IVA(_products, 20);
-            Console.WriteLine(" IVA (20%): {0} bs", results[0]);
-            Console.WriteLine(" Total a pagar: {0} bs", results[1]);
-            Console.WriteLine("");
-        }
-
-        static ArrayList RegisterProducts()
-        {
-
-            bool salir = false;
-            string name = "";
-            int value = 0;
-            int count = 0;
-            string input = "";
-
-            ArrayList products = new ArrayList();
-            Console.WriteLine(" Ingrese los productos:");
-
-            while (!salir)
-            {
-                Console.WriteLine("");
-                Console.Write(" Nombre: ");
-                name = Console.ReadLine();
-                Console.Write(" Coste: ");
-                value = Int32.Parse(Console.ReadLine());
-                Console.Write(" Cantidad: ");
-                count = Int32.Parse(Console.ReadLine());
-
-                if (value < 2)
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine(" Coste menor a 2 bs ingrese el producto otra vez");
-                    continue;
-                }
-
-                products.Add(new Producto(name, value, count));
-                Console.WriteLine("");
-                Console.Write(" Registrar otro producto(1)/Mostrar la factura(0): ");
-                input = Console.ReadLine();
-
-                if (input == "0")
-                {
-                    salir = true;
-                }
-            }
-
-            return products;
-        }
-
-        static User RegisterUser()
-        {
-            string name = "";
-            string id = "";
-
-            Console.WriteLine(" Ingrese los datos del comprador");
-            Console.WriteLine("");
-
-            Console.Write(" Nombre: ");
-            name = Console.ReadLine();
-            Console.Write(" Cedula: ");
-            id = Console.ReadLine();
-
-
-            return new User(name, id);
-        }
-
-        static bool Login(string _clave)
-        {
-            string input = "";
-            int intentos = 0;
-            bool salir = false;
-
-            while (!salir)
-            {
-                intentos++;
-                Console.WriteLine("");
-                Console.Write(" Ingrese la clave para iniciar: ");
-                input = Console.ReadLine();
-
-                if (input == _clave)
-                {
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("");
-                    Console.WriteLine(" Clave incorrecta.");
-                    if (intentos > 3)
+                    } else
                     {
-                        Console.WriteLine("");
-                        Console.WriteLine(" Acceso denegado...");
-                        salir = true;
+                        // empleado
+                        personal.Add(new Empleado(nombre, cedula, horas));
                     }
+                }                
+                foreach (Persona persona in personal)
+                {
+                    persona.mostrarDatos();
+                    Console.WriteLine("-----------------------------------");
+                }
+                //close the file
+                sr.Close();
+                Console.WriteLine(" Total pago a gerentes: {0} bs", calcularPagoGerentes(personal));                
+                Console.WriteLine(" Total pago a empleados: {0} bs", calcularPagoEmpleados(personal));                
+                Console.WriteLine(" Total nomina: {0} bs", calcularPagoEmpleados(personal) + calcularPagoGerentes(personal));
+                Console.WriteLine("-----------------------------------");
+                Console.Write(" Presione Enter para continuar");
+                Console.ReadLine();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(" Exception: " + e);
+            }
+            finally
+            {
+                Console.WriteLine("-----------------------------------");
+                Console.WriteLine(" Fin del programa...");
+            }
+            
+        }
+
+        public ArrayList leoArchivo(ArrayList personal)
+        {
+
+        }
+
+        public static double calcularPagoGerentes(ArrayList personal)
+        {
+            double total = 0;
+            foreach (Persona persona in personal)
+            {
+                Type a = persona.GetType();
+                if (a == typeof(Gerente))
+                {
+                    Gerente gerente = (Gerente)persona;
+                    total += gerente.calcularSueldo();
+                }
+            }
+            
+            return total;
+        }
+
+        public static double calcularPagoEmpleados(ArrayList personal)
+        {
+            double total = 0;
+            foreach (Persona persona in personal)
+            {
+                Type a = persona.GetType(); 
+                if (a == typeof(Empleado))
+                {
+                    Empleado gerente = (Empleado)persona;
+                    total += gerente.calcularSueldo();
                 }
             }
 
-            return false;
-
+            return total;
         }
 
     }
-
-    class Producto
+        
+    class Persona
     {
-
-        private string nombre;
-        private int valor;
-        private int cantidad;
-
-        public Producto(string _nombre, int _valor, int _cantidad)
+        protected string nombre;
+        protected string cedula;
+        
+        public Persona(string nombre, string cedula)
         {
-            this.nombre = _nombre;
-            this.valor = _valor;
-            this.cantidad = _cantidad;
+            this.nombre = nombre;
+            this.cedula = cedula;
         }
 
-        public override string ToString()
+        public virtual void mostrarDatos()
         {
-            return String.Format(" {0,-15} {1,-15} {2,-15} {3,-15}", this.nombre, this.valor, this.cantidad, this.getTotal());
+            Console.WriteLine(" Nombre: {0}, Cedula: {1}", this.nombre, this.cedula);
         }
-
-        public int getTotal()
-        {
-            return this.cantidad * this.valor;
-        }
-
     }
-    
-    class User
+
+    class Empleado : Persona
     {
-
-        private string nombre;
-        private string id;
-
-        public User(string _nombre, string _id)
+        protected double horas;
+        private int sueldoHora = 5;
+        public Empleado(string nombre, string cedula, double horas)
+            : base(nombre, cedula)
         {
-            this.nombre = _nombre;
-            this.id = _id;
+            this.horas = horas;
         }
 
-        public override string ToString()
+        public override void mostrarDatos()
         {
-            return String.Format(" Comprador: {0}\n Cedula: {1}", this.nombre, this.id);
+            Console.WriteLine(" - Empleado");
+            base.mostrarDatos();
+            Console.WriteLine(" Sueldo: {0} bs", this.calcularSueldo());
         }
-    
+
+        public double calcularSueldo()
+        {   
+            return this.horas * this.sueldoHora;
+        }
+    }
+
+    class Gerente : Persona
+    {
+        private double regalias, horas;
+        private int sueldoHora = 20;
+        public Gerente(string nombre, string cedula, double horas, double regalias)
+            : base(nombre, cedula)
+        {
+            this.regalias = regalias;
+            this.horas = horas;
+        }
+        public string getNombre()
+        {
+            return this.nombre;
+        }
+        public override void mostrarDatos()
+        {
+            Console.WriteLine(" - Gerente");
+            base.mostrarDatos();
+            Console.WriteLine(" Sueldo: {0} bs", this.calcularSueldo());
+        }
+        public double calcularSueldo()
+        {
+            return (this.horas * this.sueldoHora) + this.regalias;
+        }
     }
 
 }
