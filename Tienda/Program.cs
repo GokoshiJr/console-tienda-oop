@@ -68,11 +68,6 @@ namespace Tienda
             
         }
 
-        public ArrayList leoArchivo(ArrayList personal)
-        {
-
-        }
-
         public static double calcularPagoGerentes(ArrayList personal)
         {
             double total = 0;
